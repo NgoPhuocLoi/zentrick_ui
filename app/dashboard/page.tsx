@@ -7,11 +7,13 @@ import {
 } from "@/components/ui/sidebar";
 import FileTabs from "./file-tabs";
 import MarkdownView from "./markdown-view";
+import { getFolders } from "@/caller/folder-caller";
 
-export default function Page() {
+export default async function Page() {
+  const rootLevelFolders = await getFolders({ rootLevelOnly: true });
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar rootLevelFolders={rootLevelFolders} />
       <SidebarInset>
         <header className="flex h-10 shrink-0 items-center gap-2 border-b px-4 pt-1 bg-gray-100">
           <SidebarTrigger className="-ml-1" />

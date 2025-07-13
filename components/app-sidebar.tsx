@@ -1,13 +1,13 @@
-import * as React from "react";
 import {
   ArrowUpNarrowWide,
   ChevronRight,
   ChevronsDownUp,
-  File,
-  Folder,
+  Folder as FolderIcon,
   FolderPlus,
+  File as FileIcon,
   SquarePen,
 } from "lucide-react";
+import * as React from "react";
 
 import {
   Collapsible,
@@ -19,79 +19,22 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { Folder, SubFolder } from "@/interface/folder";
 
-// This is sample data.
-const data = {
-  changes: [
-    {
-      file: "README.md",
-      state: "M",
-    },
-    {
-      file: "api/hello/route.ts",
-      state: "U",
-    },
-    {
-      file: "app/layout.tsx",
-      state: "M",
-    },
-  ],
-  tree: [
-    [
-      "app",
-      [
-        "api",
-        ["hello", ["route.ts"]],
-        "page.tsx",
-        "layout.tsx",
-        ["blog", ["page.tsx"]],
-      ],
-    ],
-    [
-      "components",
-      ["ui", "button.tsx", "card.tsx"],
-      "header.tsx",
-      "footer.tsx",
-    ],
-    ["lib", ["util.ts"]],
-    ["public", "favicon.ico", "vercel.svg"],
-    ".eslintrc.json",
-    ".gitignore",
-    "next.config.js",
-    "tailwind.config.js",
-    "package.json",
-    "README.md",
-  ],
-};
+interface IAppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  rootLevelFolders: Folder[];
+}
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ rootLevelFolders, ...props }: IAppSidebarProps) {
   return (
     <Sidebar {...props}>
       <SidebarContent>
-        {/* <SidebarGroup>
-          <SidebarGroupLabel>Changes</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {data.changes.map((item, index) => (
-                <SidebarMenuItem key={index}>
-                  <SidebarMenuButton>
-                    <File />
-                    {item.file}
-                  </SidebarMenuButton>
-                  <SidebarMenuBadge>{item.state}</SidebarMenuBadge>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup> */}
         <SidebarGroup>
           <div className="flex items-center justify-center">
             <div className="py-1 px-2 hover:bg-gray-200 rounded-md">
@@ -110,8 +53,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {/* <SidebarGroupLabel>Files</SidebarGroupLabel> */}
           <SidebarGroupContent>
             <SidebarMenu>
-              {data.tree.map((item, index) => (
-                <Tree key={index} item={item} />
+              {rootLevelFolders.map((folder) => (
+                <FolderItem key={folder.id} folder={folder} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -122,39 +65,55 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   );
 }
 
-function Tree({ item }: { item: string | any[] }) {
-  const [name, ...items] = Array.isArray(item) ? item : [item];
+const isFolder = (item: Folder | SubFolder): item is Folder => {
+  return (item as Folder).subFolders !== undefined;
+};
 
-  if (!items.length) {
-    return (
-      <SidebarMenuButton
-        isActive={name === "button.tsx"}
-        className="data-[active=true]:bg-transparent"
-      >
-        <File />
-        {name}
-      </SidebarMenuButton>
-    );
-  }
+function FolderItem({ folder }: { folder: Folder | SubFolder }) {
+  // const [name, ...items] = Array.isArray(item) ? item : [item];
+
+  // if (!items.length) {
+  //   return (
+  // <SidebarMenuButton
+  //   isActive={name === "button.tsx"}
+  //   className="data-[active=true]:bg-transparent"
+  // >
+  //   <File />
+  //   {name}
+  // </SidebarMenuButton>
+  //   );
+  // }
 
   return (
     <SidebarMenuItem>
       <Collapsible
+        color="#f0f0f0f"
         className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90"
-        defaultOpen={name === "components" || name === "ui"}
       >
         <CollapsibleTrigger asChild>
           <SidebarMenuButton>
             <ChevronRight className="transition-transform" />
-            <Folder />
-            {name}
+            <FolderIcon />
+            {folder.name}
           </SidebarMenuButton>
         </CollapsibleTrigger>
         <CollapsibleContent>
           <SidebarMenuSub>
-            {items.map((subItem, index) => (
-              <Tree key={index} item={subItem} />
-            ))}
+            {isFolder(folder) &&
+              folder.subFolders.map((subFolder) => (
+                <FolderItem key={subFolder.id} folder={subFolder} />
+              ))}
+            {isFolder(folder) &&
+              folder.files.map((file) => (
+                <SidebarMenuButton
+                  key={file.id}
+                  isActive={file.id === 4}
+                  className="data-[active=true]:bg-transparent"
+                >
+                  <FileIcon />
+                  {file.title}
+                </SidebarMenuButton>
+              ))}
           </SidebarMenuSub>
         </CollapsibleContent>
       </Collapsible>

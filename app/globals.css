@@ -118,4 +118,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .hover-icon {
+    @apply p-1.5 rounded-sm hover:bg-gray-200 cursor-pointer hover:text-gray-800
+  }
 }
