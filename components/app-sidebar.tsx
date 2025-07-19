@@ -1,37 +1,27 @@
 import {
   ArrowUpNarrowWide,
-  ChevronRight,
   ChevronsDownUp,
-  Folder as FolderIcon,
   FolderPlus,
-  File as FileIcon,
   SquarePen,
 } from "lucide-react";
 import * as React from "react";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import NoteObjectItem from "@/app/_components/NoteObjectItem";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { Folder, SubFolder } from "@/interface/folder";
+import { NoteObject } from "@/interface/note-object";
 
 interface IAppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  rootLevelFolders: Folder[];
+  rootNoteObjects: NoteObject[];
 }
 
-export function AppSidebar({ rootLevelFolders, ...props }: IAppSidebarProps) {
+export function AppSidebar({ rootNoteObjects, ...props }: IAppSidebarProps) {
   return (
     <Sidebar {...props}>
       <SidebarContent>
@@ -52,9 +42,9 @@ export function AppSidebar({ rootLevelFolders, ...props }: IAppSidebarProps) {
           </div>
           {/* <SidebarGroupLabel>Files</SidebarGroupLabel> */}
           <SidebarGroupContent>
-            <SidebarMenu>
-              {rootLevelFolders.map((folder) => (
-                <FolderItem key={folder.id} folder={folder} />
+            <SidebarMenu className="pt-4">
+              {rootNoteObjects.map((noteObject) => (
+                <NoteObjectItem key={noteObject.id} noteObject={noteObject} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -62,61 +52,5 @@ export function AppSidebar({ rootLevelFolders, ...props }: IAppSidebarProps) {
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
-  );
-}
-
-const isFolder = (item: Folder | SubFolder): item is Folder => {
-  return (item as Folder).subFolders !== undefined;
-};
-
-function FolderItem({ folder }: { folder: Folder | SubFolder }) {
-  // const [name, ...items] = Array.isArray(item) ? item : [item];
-
-  // if (!items.length) {
-  //   return (
-  // <SidebarMenuButton
-  //   isActive={name === "button.tsx"}
-  //   className="data-[active=true]:bg-transparent"
-  // >
-  //   <File />
-  //   {name}
-  // </SidebarMenuButton>
-  //   );
-  // }
-
-  return (
-    <SidebarMenuItem>
-      <Collapsible
-        color="#f0f0f0f"
-        className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90"
-      >
-        <CollapsibleTrigger asChild>
-          <SidebarMenuButton>
-            <ChevronRight className="transition-transform" />
-            <FolderIcon />
-            {folder.name}
-          </SidebarMenuButton>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <SidebarMenuSub>
-            {isFolder(folder) &&
-              folder.subFolders.map((subFolder) => (
-                <FolderItem key={subFolder.id} folder={subFolder} />
-              ))}
-            {isFolder(folder) &&
-              folder.files.map((file) => (
-                <SidebarMenuButton
-                  key={file.id}
-                  isActive={file.id === 4}
-                  className="data-[active=true]:bg-transparent"
-                >
-                  <FileIcon />
-                  {file.title}
-                </SidebarMenuButton>
-              ))}
-          </SidebarMenuSub>
-        </CollapsibleContent>
-      </Collapsible>
-    </SidebarMenuItem>
   );
 }

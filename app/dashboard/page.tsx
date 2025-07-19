@@ -7,13 +7,13 @@ import {
 } from "@/components/ui/sidebar";
 import FileTabs from "./file-tabs";
 import MarkdownView from "./markdown-view";
-import { getFolders } from "@/caller/folder-caller";
+import { getNoteObjects } from "@/caller/note-object-caller";
 
 export default async function Page() {
-  const rootLevelFolders = await getFolders({ rootLevelOnly: true });
+  const rootNoteObjects = await getNoteObjects({ root: true });
   return (
     <SidebarProvider>
-      <AppSidebar rootLevelFolders={rootLevelFolders} />
+      <AppSidebar rootNoteObjects={rootNoteObjects} />
       <SidebarInset>
         <header className="flex h-10 shrink-0 items-center gap-2 border-b px-4 pt-1 bg-gray-100">
           <SidebarTrigger className="-ml-1" />
