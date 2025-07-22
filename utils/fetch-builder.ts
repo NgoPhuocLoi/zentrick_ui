@@ -507,7 +507,7 @@ export class FetchBuilder {
    */
   clone(): FetchBuilder {
     const cloned = new FetchBuilder(this.config);
-    cloned.requestConfig = { ...this.requestConfig };
+    cloned.requestConfig = { ...this.requestConfig, body: null };
     cloned.requestUrl = this.requestUrl;
     cloned.queryParams = { ...this.queryParams };
     cloned.pathParams = { ...this.pathParams };

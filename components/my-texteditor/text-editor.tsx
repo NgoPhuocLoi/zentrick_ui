@@ -5,10 +5,10 @@ import StarterKit from "@tiptap/starter-kit";
 
 interface ITextEditorProps {
   content: string;
-  setContent: (content: string) => void;
+  onContentChange: (content: string) => void;
 }
 
-const Editor = ({ content, setContent }: ITextEditorProps) => {
+const Editor = ({ content, onContentChange: setContent }: ITextEditorProps) => {
   const editor = useEditor({
     extensions: [StarterKit],
     editorProps: {

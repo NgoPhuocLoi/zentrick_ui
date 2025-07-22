@@ -1,7 +1,15 @@
+import { Separator } from "@/components/ui/separator";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { Provider as JotaiProvider } from "jotai";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Provider as JotaiProvider } from "jotai";
+import FileTabs from "./dashboard/file-tabs";
 import "./globals.css";
+import { AppSidebar } from "./_components/AppSidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,7 +34,22 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <JotaiProvider>{children}</JotaiProvider>
+        <JotaiProvider>
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
+              <header className="flex h-10 shrink-0 items-center gap-2 border-b px-4 pt-1 bg-gray-100">
+                <SidebarTrigger className="-ml-1" />
+                <Separator
+                  orientation="vertical"
+                  className="mr-2 data-[orientation=vertical]:h-4"
+                />
+                <FileTabs />
+              </header>
+              <div className="w-full">{children}</div>
+            </SidebarInset>
+          </SidebarProvider>
+        </JotaiProvider>
       </body>
     </html>
   );

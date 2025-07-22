@@ -1,6 +1,7 @@
 "use server";
-import { NoteObject } from "@/interface/note-object";
+import { CreateNoteObjectDTO, NoteObject } from "@/interface/note-object";
 import { apiCaller } from "@/lib/apiCaller";
+import { FetchBuilder } from "@/utils/fetch-builder";
 
 export interface GetNoteObjectsParams {
   root: boolean;
@@ -13,11 +14,23 @@ export const getNoteObjects = async (
     root: false,
   }
 ) => {
-  console.log("Fetching note objects with params:", params);
   try {
-    return apiCaller.get("/note-objects").query(params).json<NoteObject[]>();
+    const apiCall = new FetchBuilder()
+      .get("http://localhost:8080/api/note-objects")
+      .query(params);
+    return apiCall.json<NoteObject[]>();
   } catch (error) {
     console.error("Error fetching note objects:", error);
     return [];
+  }
+};
+
+export const createNoteObject = async (data: CreateNoteObjectDTO) => {
+  console.log("Creating note object with data:", data);
+  try {
+    return apiCaller.post("/note-objects").jsonBody(data).json<NoteObject>();
+  } catch (error) {
+    console.error("Error creating note object:", error);
+    return null;
   }
 };

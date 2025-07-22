@@ -1,12 +1,7 @@
-import {
-  ArrowUpNarrowWide,
-  ChevronsDownUp,
-  FolderPlus,
-  SquarePen,
-} from "lucide-react";
+import { ArrowUpNarrowWide, ChevronsDownUp, SquarePen } from "lucide-react";
 import * as React from "react";
 
-import NoteObjectItem from "@/app/_components/NoteObjectItem";
+import { CreateFolderDialog } from "@/app/_components/CreateFolderDialog";
 import {
   Sidebar,
   SidebarContent,
@@ -15,13 +10,13 @@ import {
   SidebarMenu,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { NoteObject } from "@/interface/note-object";
+import { getNoteObjects } from "@/caller/note-object-caller";
+import NoteObjectList from "./NoteObjectList";
 
-interface IAppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  rootNoteObjects: NoteObject[];
-}
-
-export function AppSidebar({ rootNoteObjects, ...props }: IAppSidebarProps) {
+export async function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
+  const rootNoteObjects = await getNoteObjects({ root: true });
   return (
     <Sidebar {...props}>
       <SidebarContent>
@@ -30,9 +25,7 @@ export function AppSidebar({ rootNoteObjects, ...props }: IAppSidebarProps) {
             <div className="py-1 px-2 hover:bg-gray-200 rounded-md">
               <SquarePen size={20} />
             </div>
-            <div className="py-1 px-2 hover:bg-gray-200 rounded-md">
-              <FolderPlus size={20} />
-            </div>
+            <CreateFolderDialog />
             <div className="py-1 px-2 hover:bg-gray-200 rounded-md">
               <ArrowUpNarrowWide size={20} />
             </div>
@@ -43,9 +36,7 @@ export function AppSidebar({ rootNoteObjects, ...props }: IAppSidebarProps) {
           {/* <SidebarGroupLabel>Files</SidebarGroupLabel> */}
           <SidebarGroupContent>
             <SidebarMenu className="pt-4">
-              {rootNoteObjects.map((noteObject) => (
-                <NoteObjectItem key={noteObject.id} noteObject={noteObject} />
-              ))}
+              <NoteObjectList initialRootNoteObjects={rootNoteObjects} />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

@@ -1,10 +1,15 @@
 "use client";
 import TextEditor from "@/components/my-texteditor/text-editor";
+import { FileContent } from "@/interface/note-object";
 import { BookOpen, Ellipsis, PenLine } from "lucide-react";
 import React, { useState } from "react";
 
-const MarkdownView = () => {
-  const [content, setContent] = useState<string>("");
+interface MarkdownViewProps {
+  fileContent: FileContent;
+}
+
+const MarkdownView = ({ fileContent }: MarkdownViewProps) => {
+  const [content, setContent] = useState<string>(fileContent.content || "");
   const [mode, setMode] = useState<"view" | "edit">("edit");
 
   const handleModeChange = () => {
@@ -22,7 +27,7 @@ const MarkdownView = () => {
       </div>
       <div className="w-full px-20 py-10">
         {mode === "edit" ? (
-          <TextEditor content={content} setContent={setContent} />
+          <TextEditor content={content} onContentChange={setContent} />
         ) : (
           <div
             className="prose"
