@@ -13,3 +13,19 @@ export const getFileContentById = async (fileId: string) => {
     return null;
   }
 };
+
+export const updateFileContent = async (
+  fileId: string,
+  content: string
+): Promise<boolean> => {
+  const apiCall = new FetchBuilder()
+    .patch(`${FILE_CONTENTS_URL}/${fileId}/content`)
+    .jsonBody({ content });
+  try {
+    const response = await apiCall.send();
+    return response.ok;
+  } catch (error) {
+    console.error("Error updating file content:", error);
+    return false;
+  }
+};

@@ -7,9 +7,8 @@ import {
 import { Provider as JotaiProvider } from "jotai";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import FileTabs from "./dashboard/file-tabs";
-import "./globals.css";
 import { AppSidebar } from "./_components/AppSidebar";
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,7 +43,7 @@ export default function RootLayout({
                   orientation="vertical"
                   className="mr-2 data-[orientation=vertical]:h-4"
                 />
-                <FileTabs />
+                {/* <FileTabs /> */}
               </header>
               <div className="w-full">{children}</div>
             </SidebarInset>

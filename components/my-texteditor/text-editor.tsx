@@ -13,7 +13,8 @@ const Editor = ({ content, onContentChange: setContent }: ITextEditorProps) => {
     extensions: [StarterKit],
     editorProps: {
       attributes: {
-        class: "prose focus:outline-none",
+        class:
+          "prose focus:outline-none [&_h1]:mb-4 [&_p]:my-2 [&_p]:leading-normal [&_ul]:my-2 [&_ol]:my-2 [&_ul_li]:my-1 [&_ul_p]:my-1 [&_ol_p]:my-1 [&_ol_li]:my-1 [&_hr]:my-4",
       },
     },
     content: content,
@@ -21,8 +22,16 @@ const Editor = ({ content, onContentChange: setContent }: ITextEditorProps) => {
       console.log("Editor content:", editor.getHTML());
       setContent(editor.getHTML());
     },
+    // Don't render immediately on the server to avoid SSR issues
+    immediatelyRender: false,
   });
-  return <EditorContent editor={editor} />;
+  return (
+    <EditorContent
+      className="w-full flex justify-center"
+      width={"100%"}
+      editor={editor}
+    />
+  );
 };
 
 export default Editor;
