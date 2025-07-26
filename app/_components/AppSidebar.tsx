@@ -1,7 +1,8 @@
-import { ArrowUpNarrowWide, ChevronsDownUp, SquarePen } from "lucide-react";
+import { ArrowUpNarrowWide, ChevronsDownUp } from "lucide-react";
 import * as React from "react";
 
 import { CreateFolderDialog } from "@/app/_components/CreateFolderDialog";
+import { getNoteObjects } from "@/caller/note-object-caller";
 import {
   Sidebar,
   SidebarContent,
@@ -10,7 +11,7 @@ import {
   SidebarMenu,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { getNoteObjects } from "@/caller/note-object-caller";
+import CreateNewNoteBtn from "./CreateNewNoteBtn";
 import NoteObjectList from "./NoteObjectList";
 
 export async function AppSidebar({
@@ -22,9 +23,7 @@ export async function AppSidebar({
       <SidebarContent>
         <SidebarGroup>
           <div className="flex items-center justify-center">
-            <div className="py-1 px-2 hover:bg-gray-200 rounded-md">
-              <SquarePen size={20} />
-            </div>
+            <CreateNewNoteBtn />
             <CreateFolderDialog />
             <div className="py-1 px-2 hover:bg-gray-200 rounded-md">
               <ArrowUpNarrowWide size={20} />

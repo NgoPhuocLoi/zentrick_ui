@@ -1,3 +1,5 @@
+import NoFileOpen from "./_components/NoFileOpen";
+
 export default function Home() {
-  return <p>Root page</p>;
+  return <NoFileOpen />;
 }

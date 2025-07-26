@@ -1,7 +1,8 @@
 "use server";
 import { CreateNoteObjectDTO, NoteObject } from "@/interface/note-object";
 import { apiCaller } from "@/lib/apiCaller";
-import { FetchBuilder } from "@/utils/fetch-builder";
+import { FetchBuilder, FetchError } from "@/utils/fetch-builder";
+import { Operation } from "fast-json-patch";
 
 export interface GetNoteObjectsParams {
   root: boolean;
@@ -31,6 +32,23 @@ export const createNoteObject = async (data: CreateNoteObjectDTO) => {
     return apiCaller.post("/note-objects").jsonBody(data).json<NoteObject>();
   } catch (error) {
     console.error("Error creating note object:", error);
+    return null;
+  }
+};
+
+export const partialUpdateNoteObject = async (
+  id: string,
+  patch: Operation[]
+) => {
+  console.log("Patching note object with id:", id, "and patch:", patch);
+  try {
+    const apiCall = new FetchBuilder()
+      .patch(`http://localhost:8080/api/note-objects/${id}`)
+      .JsonPatchBody(patch);
+
+    return apiCall.json<NoteObject>();
+  } catch (error) {
+    console.error("Error patching note object:", (error as FetchError).data);
     return null;
   }
 };

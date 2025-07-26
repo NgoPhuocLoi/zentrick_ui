@@ -1,3 +1,5 @@
+import { Operation } from "fast-json-patch";
+
 /**
  * HTTP Methods supported by the fetch builder
  */
@@ -190,6 +192,11 @@ export class FetchBuilder {
   jsonBody(data: Record<string, unknown>): FetchBuilder {
     this.requestConfig.body = JSON.stringify(data);
     return this.contentType("application/json");
+  }
+
+  JsonPatchBody(data: Operation[]): FetchBuilder {
+    this.requestConfig.body = JSON.stringify(data);
+    return this.contentType("application/json-patch+json");
   }
 
   /**
@@ -449,6 +456,7 @@ export class FetchBuilder {
           `Request failed with status ${response.status}`,
           response
         );
+
         error.data = errorData;
         throw error;
       }

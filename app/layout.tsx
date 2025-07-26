@@ -36,7 +36,7 @@ export default function RootLayout({
         <JotaiProvider>
           <SidebarProvider>
             <AppSidebar />
-            <SidebarInset>
+            <SidebarInset className="flex-1 overflow-hidden">
               <header className="flex h-10 shrink-0 items-center gap-2 border-b px-4 pt-1 bg-gray-100">
                 <SidebarTrigger className="-ml-1" />
                 <Separator
@@ -45,7 +45,7 @@ export default function RootLayout({
                 />
                 {/* <FileTabs /> */}
               </header>
-              <div className="w-full">{children}</div>
+              <div className="w-full h-full">{children}</div>
             </SidebarInset>
           </SidebarProvider>
         </JotaiProvider>

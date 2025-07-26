@@ -7,7 +7,7 @@ import {
 import { SidebarMenuItem, SidebarMenuSub } from "@/components/ui/sidebar";
 import { NoteObject } from "@/interface/note-object";
 import { useAtom } from "jotai";
-import { ChevronRight, Folder } from "lucide-react";
+import { ChevronRight, EllipsisVertical, Folder, Plus } from "lucide-react";
 import { noteObjectsChildrenAtom } from "../_atoms/note-objects-atom";
 import { useEffect, useState } from "react";
 import NoteObjectItem from "./NoteObjectItem";
@@ -54,7 +54,7 @@ const FolderItem = ({ noteObject }: FolderItemProps) => {
         color="#f0f0f0f"
       >
         <CollapsibleTrigger asChild>
-          <div className="flex items-center gap-1 px-2 py-1 text-sm text-gray-700 hover:bg-gray-200 rounded-md cursor-pointer">
+          <div className="group/folder-item flex items-center gap-1 px-2 py-1 text-sm text-gray-700 hover:bg-gray-200 rounded-md cursor-pointer">
             <ChevronRight
               size={16}
               className={clsx({
@@ -63,6 +63,15 @@ const FolderItem = ({ noteObject }: FolderItemProps) => {
             />
             <Folder size={16} />
             {noteObject.title}
+
+            <div className="gap-1 ml-auto hidden group-hover/folder-item:flex">
+              <div className="p-0.5 hover:bg-gray-300 rounded-full cursor-pointer">
+                <Plus size={15} />
+              </div>
+              <div className="p-0.5 hover:bg-gray-300 rounded-full cursor-pointer">
+                <EllipsisVertical size={15} />
+              </div>
+            </div>
           </div>
         </CollapsibleTrigger>
         <CollapsibleContent>
