@@ -1,4 +1,5 @@
 "use client";
+import { getNoteObjects } from "@/caller/note-object-caller";
 import {
   Collapsible,
   CollapsibleContent,
@@ -6,13 +7,13 @@ import {
 } from "@/components/ui/collapsible";
 import { SidebarMenuItem, SidebarMenuSub } from "@/components/ui/sidebar";
 import { NoteObject } from "@/interface/note-object";
-import { useAtom } from "jotai";
-import { ChevronRight, EllipsisVertical, Folder, Plus } from "lucide-react";
-import { noteObjectsChildrenAtom } from "../_atoms/note-objects-atom";
-import { useEffect, useState } from "react";
-import NoteObjectItem from "./NoteObjectItem";
 import clsx from "clsx";
-import { getNoteObjects } from "@/caller/note-object-caller";
+import { useAtom } from "jotai";
+import { ChevronRight, Folder } from "lucide-react";
+import { useEffect, useState } from "react";
+import { noteObjectsChildrenAtom } from "../_atoms/note-objects-atom";
+import NoteObjectItem from "./NoteObjectItem";
+import NoteObjectMenuActions from "./NoteObjectMenuActions";
 
 interface FolderItemProps {
   noteObject: NoteObject;
@@ -21,6 +22,9 @@ interface FolderItemProps {
 const FolderItem = ({ noteObject }: FolderItemProps) => {
   const [openFolder, setOpenFolder] = useState(false);
   const [chidlren, setChildren] = useAtom(noteObjectsChildrenAtom);
+  const [contextMenuSelectedNoteId, setContextMenuSelectedNoteId] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     const fetchChildren = async () => {
@@ -53,27 +57,31 @@ const FolderItem = ({ noteObject }: FolderItemProps) => {
         onOpenChange={setOpenFolder}
         color="#f0f0f0f"
       >
-        <CollapsibleTrigger asChild>
-          <div className="group/folder-item flex items-center gap-1 px-2 py-1 text-sm text-gray-700 hover:bg-gray-200 rounded-md cursor-pointer">
-            <ChevronRight
-              size={16}
-              className={clsx({
-                "rotate-90": openFolder,
-              })}
-            />
-            <Folder size={16} />
-            {noteObject.title}
-
-            <div className="gap-1 ml-auto hidden group-hover/folder-item:flex">
-              <div className="p-0.5 hover:bg-gray-300 rounded-full cursor-pointer">
-                <Plus size={15} />
-              </div>
-              <div className="p-0.5 hover:bg-gray-300 rounded-full cursor-pointer">
-                <EllipsisVertical size={15} />
-              </div>
+        <NoteObjectMenuActions
+          noteObject={noteObject}
+          setContextMenuSelectedNoteId={setContextMenuSelectedNoteId}
+        >
+          <CollapsibleTrigger asChild>
+            <div
+              className={clsx(
+                "relative group/folder-item flex items-center gap-1 px-2 py-1 text-sm text-gray-700 hover:bg-gray-200 rounded-md cursor-pointer",
+                {
+                  "bg-gray-200":
+                    openFolder || noteObject.id === contextMenuSelectedNoteId,
+                }
+              )}
+            >
+              <ChevronRight
+                size={16}
+                className={clsx("flex-shrink-0", {
+                  "rotate-90": openFolder,
+                })}
+              />
+              <Folder className="flex-shrink-0" size={16} />
+              <span className="line-clamp-1">{noteObject.title}</span>
             </div>
-          </div>
-        </CollapsibleTrigger>
+          </CollapsibleTrigger>
+        </NoteObjectMenuActions>
         <CollapsibleContent>
           <SidebarMenuSub>
             {chidlren[noteObject.id]?.map((child) => (
