@@ -52,3 +52,19 @@ export const partialUpdateNoteObject = async (
     return null;
   }
 };
+
+export const deleteNoteObject = async (id: string) => {
+  console.log("Deleting note object with id:", id);
+  try {
+    const apiCall = new FetchBuilder().delete(
+      `http://localhost:8080/api/note-objects/${id}`
+    );
+
+    const response = await apiCall.send();
+
+    return response.ok;
+  } catch (error) {
+    console.error("Error deleting note object:", (error as FetchError).data);
+    return false;
+  }
+};

@@ -36,10 +36,7 @@ const MarkdownViewer = ({ fileContent }: MarkdownViewProps) => {
   return (
     <>
       <div className="w-full py-5">
-        <TextEditor
-          content={content || "Enter text here..."}
-          onContentChange={setContent}
-        />
+        <TextEditor content={content} onContentChange={setContent} />
         {/* ) : (
           <div
             className="prose"

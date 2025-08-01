@@ -10,10 +10,11 @@ import { NoteObject } from "@/interface/note-object";
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import { ChevronRight, Folder } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { noteObjectsChildrenAtom } from "../_atoms/note-objects-atom";
 import NoteObjectItem from "./NoteObjectItem";
 import NoteObjectMenuActions from "./NoteObjectMenuActions";
+import { updateNoteObjectTitle } from "../_utils/note-object-util";
 
 interface FolderItemProps {
   noteObject: NoteObject;
@@ -25,6 +26,18 @@ const FolderItem = ({ noteObject }: FolderItemProps) => {
   const [contextMenuSelectedNoteId, setContextMenuSelectedNoteId] = useState<
     number | null
   >(null);
+  const [folderName, setFolderName] = useState(noteObject.title);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const folderNameInputRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (isRenaming && folderNameInputRef.current) {
+        folderNameInputRef.current.focus();
+        folderNameInputRef.current.select();
+      }
+    }, 100);
+  }, [isRenaming]);
 
   useEffect(() => {
     const fetchChildren = async () => {
@@ -50,6 +63,25 @@ const FolderItem = ({ noteObject }: FolderItemProps) => {
     }
   }, [noteObject.id, openFolder, setChildren, chidlren]);
 
+  const saveNewFolderName = async () => {
+    if (!folderName.trim()) {
+      setFolderName(noteObject.title); // Reset to original name if empty
+    }
+    await updateNoteObjectTitle(noteObject.id, folderName);
+    setIsRenaming(false);
+  };
+
+  const handleKeydown = async (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      await saveNewFolderName();
+      setIsRenaming(false);
+    } else if (e.key === "Escape") {
+      setIsRenaming(false);
+      setFolderName(noteObject.title); // Reset to original name
+    }
+  };
+
   return (
     <SidebarMenuItem>
       <Collapsible
@@ -60,14 +92,15 @@ const FolderItem = ({ noteObject }: FolderItemProps) => {
         <NoteObjectMenuActions
           noteObject={noteObject}
           setContextMenuSelectedNoteId={setContextMenuSelectedNoteId}
+          setRenamingFolder={setIsRenaming}
         >
           <CollapsibleTrigger asChild>
             <div
               className={clsx(
                 "relative group/folder-item flex items-center gap-1 px-2 py-1 text-sm text-gray-700 hover:bg-gray-200 rounded-md cursor-pointer",
                 {
-                  "bg-gray-200":
-                    openFolder || noteObject.id === contextMenuSelectedNoteId,
+                  "bg-gray-200": noteObject.id === contextMenuSelectedNoteId,
+                  border: isRenaming,
                 }
               )}
             >
@@ -78,7 +111,20 @@ const FolderItem = ({ noteObject }: FolderItemProps) => {
                 })}
               />
               <Folder className="flex-shrink-0" size={16} />
-              <span className="line-clamp-1">{noteObject.title}</span>
+              {isRenaming ? (
+                <textarea
+                  onClick={(e) => e.stopPropagation()}
+                  value={folderName}
+                  onChange={(e) => setFolderName(e.target.value)}
+                  className="flex-1 resize-none border-none outline-none text-ellipsis overflow-hidden"
+                  rows={1}
+                  onBlur={saveNewFolderName}
+                  ref={folderNameInputRef}
+                  onKeyDown={handleKeydown}
+                />
+              ) : (
+                <span className="line-clamp-1">{folderName}</span>
+              )}
             </div>
           </CollapsibleTrigger>
         </NoteObjectMenuActions>

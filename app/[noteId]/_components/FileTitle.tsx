@@ -2,10 +2,9 @@ import {
   noteObjectsChildrenAtom,
   rootNoteObjectsAtom,
 } from "@/app/_atoms/note-objects-atom";
-import { partialUpdateNoteObject } from "@/caller/note-object-caller";
+import { updateNoteObjectTitle } from "@/app/_utils/note-object-util";
 import useDebounce from "@/hooks/use-debounce";
 import { FileContent, NoteObject } from "@/interface/note-object";
-import { Operation } from "fast-json-patch";
 import { useAtom } from "jotai";
 import React, { useEffect, useState } from "react";
 
@@ -17,7 +16,7 @@ const FileTitle = ({ fileContent }: FileTitleProps) => {
   const [title, setTitle] = useState(fileContent.noteObject.title);
   const [, setRootNoteObjects] = useAtom(rootNoteObjectsAtom);
   const [, setNoteObjectsChildren] = useAtom(noteObjectsChildrenAtom);
-  const debouncedTitle = useDebounce(title, 500);
+  const debouncedTitle = useDebounce(title, 500) as string;
 
   const updateNoteTitleInList = (
     noteObjects: NoteObject[],
@@ -46,8 +45,15 @@ const FileTitle = ({ fileContent }: FileTitleProps) => {
         ),
       }));
     } else {
+      // setRootNoteObjects((prev) =>
+      //   updateNoteTitleInList(prev, fileContent.noteObject.id, newTitle)
+      // );
       setRootNoteObjects((prev) =>
-        updateNoteTitleInList(prev, fileContent.noteObject.id, newTitle)
+        prev.map((obj) =>
+          obj.id === fileContent.noteObject.id
+            ? { ...obj, title: newTitle }
+            : obj
+        )
       );
     }
     setTitle(newTitle);
@@ -56,14 +62,7 @@ const FileTitle = ({ fileContent }: FileTitleProps) => {
   useEffect(() => {
     if (debouncedTitle && debouncedTitle !== fileContent.noteObject.title) {
       console.log("Updating title:", debouncedTitle);
-      const patchOperation: Operation = {
-        op: "replace",
-        path: "/title",
-        value: debouncedTitle,
-      };
-      partialUpdateNoteObject(fileContent.noteObject.id.toString(), [
-        patchOperation,
-      ]);
+      updateNoteObjectTitle(fileContent.noteObject.id, debouncedTitle);
     }
   }, [debouncedTitle, fileContent.noteObject.id, fileContent.noteObject.title]);
   return (
